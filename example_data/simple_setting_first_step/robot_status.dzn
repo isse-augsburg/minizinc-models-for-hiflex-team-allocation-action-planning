@@ -1,0 +1,4 @@
+currentPos = array1d(1..15, [74, 12, 8, 47, 45, 52, 61, 67, 44, 59, 18, 3, 34, 2, 68]);
+robotAvailableActive = array1d(1..15, [true, true, true, true, true, true, true, true, true, true, true, true, true, true, true]);
+robotAvailablePassive = array1d(1..15, [true, true, true, true, true, true, true, true, true, true, true, true, true, true, true]);
+robotAvailableMoving = array1d(1..15, [true, true, true, true, true, true, true, true, true, true, true, true, true, true, true]);

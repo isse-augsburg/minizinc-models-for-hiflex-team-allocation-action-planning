@@ -1,0 +1,10 @@
+finalState = 6;
+allowHandlersToStoreParts = false;
+optimizeAssignedSkills = true;
+optimizeTransfers = true;
+optimizeMovementNum = true;
+optimizeMovementDist = true;
+applyUnknownTransferPenalties = true;
+adjustmentPenalty = 20;
+transferPenalty = 50;
+transferDistPenalty = 5;

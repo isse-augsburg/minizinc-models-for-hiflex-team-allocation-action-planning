@@ -1,0 +1,2 @@
+currentSkill = array1d(1..32, [true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true]);
+freeCapacity = array1d(1..32, [68, 0, 0, 0, 48, 1, 34, 0, 1, 0, 34, 1, 0, 34, 1, 0, 34, 1, 68, 0, 0, 6, 6, 8, 8, 2, 2, 34, 0, 1, 1, 1]);
