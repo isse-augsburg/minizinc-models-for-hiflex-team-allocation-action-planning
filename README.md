@@ -190,7 +190,6 @@ Additionally, heuristic target positions:
 1. **No robot or part is chosen twice**
 
 $$
->
 \forall rl_1 \neq rl_2 \in \mathrm{Rl}^{\hat{s}}:\hat{r}(rl_1) \neq \hat{r}(rl_2)
 $$
 
