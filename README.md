@@ -159,7 +159,7 @@ There are multiple different distances measured between positions $d(pos_1, pos_
 
 - $\mathrm{P}$ is the set of all available parts.
 - $h_0 : \mathrm{P} \rightarrow \mathrm{R}$ is the robot that currently holds the part.
-- $\mathrm{R}_{\text{hold}}, \mathrm{R}_{\text{handle}} : \mathrm{P} \rightarrow \mathbb{P}(\mathrm{R})$ are robots that can hold or handle a part.
+- $\mathrm{R}_{\text{hold}}: \mathrm{P} \rightarrow \mathbb{P}(\mathrm{R})$ and $\mathrm{R}_{\text{handle}} : \mathrm{P} \rightarrow \mathbb{P}(\mathrm{R})$ are robots that can hold or handle a part.
 
 Holding a part means that the robot can store or keep it in place.
 Handling a part means that the robot can actively take it or hand it to another holder.
@@ -192,40 +192,60 @@ Additionally, heuristic target positions:
 
 1. **No robot or part is chosen twice**
 
-$\forall rl_1 \neq rl_2 \in \mathrm{Rl}^{\hat{s}}:\hat{r}(rl_1) \neq \hat{r}(rl_2)$
+$$
+\forall rl_1 \neq rl_2 \in \mathrm{Rl}^{\hat{s}}:\hat{r}(rl_1) \neq \hat{r}(rl_2)
+$$
 
-$\forall req_1 \neq req_2 \in \mathrm{Req}^{\hat{s}}:\hat{p}(req_1) \neq \hat{p}(req_2)$
+$$
+\forall req_1 \neq req_2 \in \mathrm{Req}^{\hat{s}}:\hat{p}(req_1) \neq \hat{p}(req_2)
+$$
 
 2. **Chosen robots can fulfill the roles**
 
-$\forall rl \in \mathrm{Rl}^{\hat{s}} \exists sk \in \text{possibleSkills}(rl): sk \in \text{skills}(\hat{r}(rl))$
+$$
+\forall rl \in \mathrm{Rl}^{\hat{s}} \exists sk \in \text{possibleSkills}(rl): sk \in \text{skills}(\hat{r}(rl))
+$$
 
 3. **Chosen parts fulfill the requirements**
 
-$\forall req \in \mathrm{Req}^{\hat{s}}:\hat{p}(req) \in \text{possibleParts}(req)$
+$$
+\forall req \in \mathrm{Req}^{\hat{s}}:\hat{p}(req) \in \text{possibleParts}(req)
+$$
 
 4. **Only available robots and parts held by available robots**
 
-$\forall rl \in \mathrm{Rl}^{\hat{s}}:\text{avail}(\hat{r}(rl))$
+$$
+\forall rl \in \mathrm{Rl}^{\hat{s}}:\text{avail}(\hat{r}(rl))
+$$
 
-$\forall req \in \mathrm{Req}^{\hat{s}}:\text{avail}(h_0(\hat{p}(req)))$
+$$
+\forall req \in \mathrm{Req}^{\hat{s}}:\text{avail}(h_0(\hat{p}(req)))
+$$
 
 5. **Team members can reach the working position**
 
-$\forall rl \in \mathrm{Rl}^{\hat{s}}:r_{\min}(\hat{r}(rl)) \le d_w(\hat{pos}_t(\hat{r}(rl)), \hat{pos}_w)
-\le r_{\max}(\hat{r}(rl))$
+$$
+\forall rl \in \mathrm{Rl}^{\hat{s}}:r_{\min}(\hat{r}(rl)) \le d_w(\hat{pos}_t(\hat{r}(rl)), \hat{pos}_w)
+\le r_{\max}(\hat{r}(rl))
+$$
 
 6. **Robots can reach their target position**
 
-$\forall r \in \mathrm{R}:\hat{pos}_t(r) \neq pos_0(r) \Rightarrow \hat{pos}_t(r) \in (\mathrm{Pos}^{\mu(r)} \setminus \mathrm{Pos}_{\text{blocked}}) \land \text{avail}(r)$
+$$
+\forall r \in \mathrm{R}:\hat{pos}_t(r) \neq pos_0(r) \Rightarrow \hat{pos}_t(r) \in (\mathrm{Pos}^{\mu(r)} \setminus \mathrm{Pos}_{\text{blocked}}) \land \text{avail}(r)
+$$
 
 7. **Robots cannot share positions**
 
-$\forall r_1 \neq r_2 \in \mathrm{R}: \hat{pos}_t(r_1) \neq \hat{pos}_t(r_2)$
+$$
+\forall r_1 \neq r_2 \in \mathrm{R}: \hat{pos}_t(r_1) \neq \hat{pos}_t(r_2)
+$$
 
 8. **Linear ordering and offsets on linear axes**
 
-$\forall l \in \mathrm{L}, r_1 \neq r_2 \in \mathrm{R}^l: o^l(pos_0(r_1)) > o^l(pos_0(r_2)) \Rightarrow o^l(\hat{pos}_t(r_1)) > o^l(\hat{pos}_t(r_2)) + \Delta^l$
+$$
+\forall l \in \mathrm{L}, r_1 \neq r_2 \in \mathrm{R}^l: o^l(pos_0(r_1)) > o^l(pos_0(r_2)) \Rightarrow o^l(\hat{pos}_t(r_1)) > o^l(\hat{pos}_t(r_2)) + \Delta^l
+$$
 
 #### Optimization Criteria
 
@@ -234,7 +254,7 @@ In the following description, as well as in our MiniZinc implementation, all rew
 In reality, the system usually uses floating point numbers for these values, which are then multiplied by a constant factor and rounded to convert them to integers.
 
 The reward for the model is given by a simple assignment of an importance value for each step.
-- $ \text{importance}: \mathrm{S} \to \mathbb{N} $: The importance of a step, to prioritize them, calculated by the production control based on various configurable factors (cf. Section 4.1 in the paper).
+- $\text{importance}: \mathrm{S} \to \mathbb{N}$: The importance of a step, to prioritize them, calculated by the production control based on various configurable factors (cf. Section 4.1 in the paper).
 
 
 The following costs are considered to penalize certain allocations:
@@ -247,42 +267,41 @@ The following costs are considered to penalize certain allocations:
 The solver maximizes the following value (with all inputs being treated as constants):
 
 $$
-\begin{aligned}
-\text{value}(\hat{s}, \hat{pos}_w, \hat{r}, \hat{p}, \hat{pos}_t) =
-&\ \text{importance}(\hat{s}) \\
-- &\sum_{rl \in \mathrm{Rl}^{\hat{s}}} \text{allocationCost}(\hat{r}(rl)) \\
-- &\sum_{r \in \mathrm{R}} \text{moved}(r, \hat{pos}_t)\cdot \text{moveCost}(r) \\
-- &\sum_{r \in \mathrm{R}} d^{\mu(r)}(pos_0(r), \hat{pos}_t(r))\cdot \text{moveDistCost}(r) \\
-- &\sum_{req \in \mathrm{Req}^{\hat{s}}} \text{transferred}(req, \hat{r}, \hat{p})\cdot \text{transferCost} \\
-- &\sum_{req \in \mathrm{Req}^{\hat{s}}} \text{transferDist}(req, \hat{r}, \hat{p}, \hat{pos}_t)\cdot \text{transferDistCost}
-\end{aligned}
+\begin{array}{rll}
+\text{value}(\hat{s}, \hat{pos}_w, \hat{r}, \hat{p}, \hat{pos}_t) = &&\ \text{importance}(\hat{s}) \\
+- &\sum_{rl \in \mathrm{Rl}^{\hat{s}}} &\text{allocationCost}(\hat{r}(rl)) \\
+- &\sum_{r \in \mathrm{R}} &\text{moved}(r, \hat{pos}_t)\cdot \text{moveCost}(r) \\
+- &\sum_{r \in \mathrm{R}} &d^{\mu(r)}(pos_0(r), \hat{pos}_t(r))\cdot \text{moveDistCost}(r) \\
+- &\sum_{req \in \mathrm{Req}^{\hat{s}}} &\text{transferred}(req, \hat{r}, \hat{p})\cdot \text{transferCost} \\
+- &\sum_{req \in \mathrm{Req}^{\hat{s}}} &\text{transferDist}(req, \hat{r}, \hat{p}, \hat{pos}_t)\cdot \text{transferDistCost}
+\end{array}
 $$
 
 with auxiliary definitions:
 
-$
+$$
 \text{moved}(r, \hat{pos}_t) =
 \begin{cases}
 1 & \text{if } \hat{pos}_t(r) \neq pos_0(r) \\
 0 & \text{otherwise}
 \end{cases}
-$
+$$
 
-$
+$$
 \text{transferred}(req, \hat{r}, \hat{p}) =
 \begin{cases}
 1 & \text{if } h_0(\hat{p}(req)) \neq \hat{r}(\text{targetRole}(req)) \\
 0 & \text{otherwise}
 \end{cases}
-$
+$$
 
-$
+$$
 \text{transferDist}(req, \hat{r}, \hat{p}, \hat{pos}_t) =
 \begin{cases}
 d_{\text{trans}}(pos_0(h_0(\hat{p}(req))), \hat{pos}_t(\hat{r}(\text{targetRole}(req)))) & \text{if } transferred(req, \hat{r}, \hat{p}) \\
 0 & \text{otherwise}
 \end{cases}
-$
+$$
 
 If the solver does not find an optimal solution within a timeout, it returns the best solution found so far.
 If no solution fulfills all constraints, no new step execution is started.
