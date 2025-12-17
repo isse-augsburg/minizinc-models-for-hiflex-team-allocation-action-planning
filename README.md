@@ -126,7 +126,7 @@ This README uses GitHub’s LaTeX math rendering. If you view it somewhere that 
 
 - $\mathrm{Pos}$ is a set of relevant positions in the cell. These could, for example, correspond to a certain square in a grid layout for the cell.
 - $\mathrm{Pos}_w \subseteq \mathrm{Pos}$ is the set of working positions, i.e., positions that can be assigned as the position where the actual production process should take place.
-- $\mathrm{Pos}_{\text{blocked}} \subseteq \mathrm{Pos}$ is the set of positions that are currently blocked from being used, e.g., because another robot is already planned to move there.
+- $\mathrm{Pos}_{\mathrm{blocked}} \subseteq \mathrm{Pos}$ is the set of positions that are currently blocked from being used, e.g., because another robot is already planned to move there.
 
 As we have different kinds of robots in the cell, which can reach different positions and have different movement distances between positions, we differentiate between multiple mobility classes.
 In our example cell, which we introduced in the paper, there is one mobility class for every linear axis and one for the carts that can freely move on the floor, while linear axes are considered as obstacles.
@@ -142,7 +142,7 @@ There are multiple different distances measured between positions $d(pos_1, pos_
 
 - $d^m : \mathrm{Pos}^m \times \mathrm{Pos}^m \rightarrow \mathbb{N}$ is an approximation of the distance a robot from mobility class $m$ would have to move from one position to the other.
 - $d_w : \mathrm{Pos} \times \mathrm{Pos}_w \rightarrow \mathbb{N}$ is the work distance, which practically corresponds to the Euclidean distance.
-- $d_{\text{trans}} : \mathrm{Pos} \times \mathrm{Pos} \rightarrow \mathbb{N}$ is the transfer distance.
+- $d_{\mathrm{trans}} : \mathrm{Pos} \times \mathrm{Pos} \rightarrow \mathbb{N}$ is the transfer distance.
 
 ##### Robots & Skills
 
@@ -150,16 +150,16 @@ There are multiple different distances measured between positions $d(pos_1, pos_
 - $\mu : \mathrm{R} \rightarrow \mathrm{M}$ is the mobility class of a robot.
 - $\mathrm{R}^m := \{ r \in \mathrm{R} \mid \mu(r) = m \}$ is the set of all robots of mobility class $m$.
 - $pos_0 : \mathrm{R} \rightarrow \mathrm{Pos}$ is the current position of a robot.
-- $\text{avail} : \mathrm{R} \rightarrow \mathbb{B}$ indicates if a robot is currently available.
+- $\mathrm{avail} : \mathrm{R} \rightarrow \mathbb{B}$ indicates if a robot is currently available.
 - $r_{\min}, r_{\max} : \mathrm{R} \rightarrow \mathbb{N}$ are minimum and maximum reachability distances.
 - $\mathrm{Sk}$ is the set of all skills.
-- $\text{skills} : \mathrm{R} \rightarrow \mathbb{P}(\mathrm{Sk})$ are the current skills of a robot.
+- $\mathrm{skills} : \mathrm{R} \rightarrow \mathbb{P}(\mathrm{Sk})$ are the current skills of a robot.
 
 ##### Parts
 
 - $\mathrm{P}$ is the set of all available parts.
 - $h_0 : \mathrm{P} \rightarrow \mathrm{R}$ is the robot that currently holds the part.
-- $\mathrm{R}_{\text{hold}}: \mathrm{P} \rightarrow \mathbb{P}(\mathrm{R})$ and $\mathrm{R}_{\text{handle}} : \mathrm{P} \rightarrow \mathbb{P}(\mathrm{R})$ are robots that can hold or handle a part.
+- $\mathrm{R}_\mathrm{hold}, \mathrm{R}_\mathrm{handle} : \mathrm{P} \rightarrow \mathbb{P}(\mathrm{R})$ are robots that can hold or handle a part.
 
 Holding a part means that the robot can store or keep it in place.
 Handling a part means that the robot can actively take it or hand it to another holder.
@@ -171,16 +171,16 @@ All handlers can also hold the part, but not all holders can handle it.
 - $\mathrm{S}^t \subseteq \mathrm{S}$ are the steps of task $t \in \mathrm{T}$ with pairwise disjointness and $\mathrm{S} = \bigcup_{t \in \mathrm{T}} \mathrm{S}^t$.
 - $\mathrm{Rl}^s \subseteq \mathrm{Rl}$ are the roles of step $s \in \mathrm{S}$ with pairwise disjointness and $\mathrm{Rl} = \bigcup_{s \in \mathrm{S}} \mathrm{Rl}^s$.
 - $\mathrm{Req}^s \subseteq \mathrm{Req}$ are the requirements of step $s \in \mathrm{S}$ with pairwise disjointness and $\mathrm{Req} = \bigcup_{s \in \mathrm{S}} \mathrm{Req}^s$.
-- $\text{targetRole} : \mathrm{Req} \rightarrow \mathrm{Rl}$ assigns the role that should hold the part at the start of step execution.
-- $\text{possibleSkills} : \mathrm{Rl} \rightarrow \mathbb{P}(\mathrm{Sk})$ are the skills that can fulfill a role.
-- $\text{possibleParts} : \mathrm{Req} \rightarrow \mathbb{P}(\mathrm{P})$ are the parts that can fulfill a requirement.
+- $\mathrm{targetRole} : \mathrm{Req} \rightarrow \mathrm{Rl}$ assigns the role that should hold the part at the start of step execution.
+- $\mathrm{possibleSkills} : \mathrm{Rl} \rightarrow \mathbb{P}(\mathrm{Sk})$ are the skills that can fulfill a role.
+- $\mathrm{possibleParts} : \mathrm{Req} \rightarrow \mathbb{P}(\mathrm{P})$ are the parts that can fulfill a requirement.
 
 #### Decision Variables
 
 The solver must determine:
 
 - $\hat{s} \in \mathrm{S}$: the step chosen for execution.
-- $\hat{pos}_w \in \mathrm{Pos}_w \setminus \mathrm{Pos}_{\text{blocked}}$: the working position.
+- $\hat{pos}_w \in \mathrm{Pos}_w \setminus \mathrm{Pos}_{\mathrm{blocked}}$: the working position.
 - $\hat{r} : \mathrm{Rl}^{\hat{s}} \rightarrow \mathrm{R}$: the team of robots.
 - $\hat{p} : \mathrm{Req}^{\hat{s}} \rightarrow \mathrm{P}$: the assigned parts.
 
@@ -193,6 +193,7 @@ Additionally, heuristic target positions:
 1. **No robot or part is chosen twice**
 
 $$
+>
 \forall rl_1 \neq rl_2 \in \mathrm{Rl}^{\hat{s}}:\hat{r}(rl_1) \neq \hat{r}(rl_2)
 $$
 
@@ -200,26 +201,26 @@ $$
 \forall req_1 \neq req_2 \in \mathrm{Req}^{\hat{s}}:\hat{p}(req_1) \neq \hat{p}(req_2)
 $$
 
-2. **Chosen robots can fulfill the roles**
+1. **Chosen robots can fulfill the roles**
 
 $$
-\forall rl \in \mathrm{Rl}^{\hat{s}} \exists sk \in \text{possibleSkills}(rl): sk \in \text{skills}(\hat{r}(rl))
+\forall rl \in \mathrm{Rl}^{\hat{s}} \exists sk \in \mathrm{possibleSkills}(rl): sk \in \mathrm{skills}(\hat{r}(rl))
 $$
 
 3. **Chosen parts fulfill the requirements**
 
 $$
-\forall req \in \mathrm{Req}^{\hat{s}}:\hat{p}(req) \in \text{possibleParts}(req)
+\forall req \in \mathrm{Req}^{\hat{s}}:\hat{p}(req) \in \mathrm{possibleParts}(req)
 $$
 
 4. **Only available robots and parts held by available robots**
 
 $$
-\forall rl \in \mathrm{Rl}^{\hat{s}}:\text{avail}(\hat{r}(rl))
+\forall rl \in \mathrm{Rl}^{\hat{s}}:\mathrm{avail}(\hat{r}(rl))
 $$
 
 $$
-\forall req \in \mathrm{Req}^{\hat{s}}:\text{avail}(h_0(\hat{p}(req)))
+\forall req \in \mathrm{Req}^{\hat{s}}:\mathrm{avail}(h_0(\hat{p}(req)))
 $$
 
 5. **Team members can reach the working position**
@@ -232,7 +233,7 @@ $$
 6. **Robots can reach their target position**
 
 $$
-\forall r \in \mathrm{R}:\hat{pos}_t(r) \neq pos_0(r) \Rightarrow \hat{pos}_t(r) \in (\mathrm{Pos}^{\mu(r)} \setminus \mathrm{Pos}_{\text{blocked}}) \land \text{avail}(r)
+\forall r \in \mathrm{R}:\hat{pos}_t(r) \neq pos_0(r) \Rightarrow \hat{pos}_t(r) \in (\mathrm{Pos}^{\mu(r)} \setminus \mathrm{Pos}_{\mathrm{blocked}}) \land \mathrm{avail}(r)
 $$
 
 7. **Robots cannot share positions**
@@ -254,52 +255,53 @@ In the following description, as well as in our MiniZinc implementation, all rew
 In reality, the system usually uses floating point numbers for these values, which are then multiplied by a constant factor and rounded to convert them to integers.
 
 The reward for the model is given by a simple assignment of an importance value for each step.
-- $\text{importance}: \mathrm{S} \to \mathbb{N}$: The importance of a step, to prioritize them, calculated by the production control based on various configurable factors (cf. Section 4.1 in the paper).
+- $\mathrm{importance}: \mathrm{S} \to \mathbb{N}$: The importance of a step, to prioritize them, calculated by the production control based on various configurable factors (cf. Section 4.1 in the paper).
 
 
 The following costs are considered to penalize certain allocations:
-- $\text{allocationCost}: \mathrm{R} \to \mathbb{N}$: The cost of assigning a robot to a team. If certain robots are considered more valuable than others, this can be differentiated here.
-- $\text{moveCost}: \mathrm{R} \to \mathbb{N}$: The cost of moving a robot, no matter the distance. This is done for representing the difficulties it can cause to precisely measure the new position of a moved robot. In our system, this is trivial for the robots on linear axes but very challenging for the carts, as their internal positioning system is not sufficient for high-precision production processes and thus requires additional camera-based localization. Therefore, this cost is quite high for the carts, while it is negligible for the robots on linear axes.
-- $\text{moveDistCost}: \mathrm{R} \to \mathbb{N}$: The cost of moving a robot per distance unit, which is used to represent the time it takes to move the robot.
-- $\text{transferCost}: \mathbb{N}$: The constant cost if a part has to be transferred to another robot.
-- $\text{transferDistCost}: \mathbb{N}$: The approximated cost of transferring a part over a distance, as given by $d_{\text{trans}}$.
+- $\mathrm{allocationCost}: \mathrm{R} \to \mathbb{N}$: The cost of assigning a robot to a team. If certain robots are considered more valuable than others, this can be differentiated here.
+- $\mathrm{moveCost}: \mathrm{R} \to \mathbb{N}$: The cost of moving a robot, no matter the distance. This is done for representing the difficulties it can cause to precisely measure the new position of a moved robot. In our system, this is trivial for the robots on linear axes but very challenging for the carts, as their internal positioning system is not sufficient for high-precision production processes and thus requires additional camera-based localization. Therefore, this cost is quite high for the carts, while it is negligible for the robots on linear axes.
+- $\mathrm{moveDistCost}: \mathrm{R} \to \mathbb{N}$: The cost of moving a robot per distance unit, which is used to represent the time it takes to move the robot.
+- $\mathrm{transferCost}: \mathbb{N}$: The constant cost if a part has to be transferred to another robot.
+- $\mathrm{transferDistCost}: \mathbb{N}$: The approximated cost of transferring a part over a distance, as given by $d_{\mathrm{trans}}$.
 
 The solver maximizes the following value (with all inputs being treated as constants):
 
 $$
 \begin{array}{rll}
-\text{value}(\hat{s}, \hat{pos}_w, \hat{r}, \hat{p}, \hat{pos}_t) = &&\ \text{importance}(\hat{s}) \\
-- &\sum_{rl \in \mathrm{Rl}^{\hat{s}}} &\text{allocationCost}(\hat{r}(rl)) \\
-- &\sum_{r \in \mathrm{R}} &\text{moved}(r, \hat{pos}_t)\cdot \text{moveCost}(r) \\
-- &\sum_{r \in \mathrm{R}} &d^{\mu(r)}(pos_0(r), \hat{pos}_t(r))\cdot \text{moveDistCost}(r) \\
-- &\sum_{req \in \mathrm{Req}^{\hat{s}}} &\text{transferred}(req, \hat{r}, \hat{p})\cdot \text{transferCost} \\
-- &\sum_{req \in \mathrm{Req}^{\hat{s}}} &\text{transferDist}(req, \hat{r}, \hat{p}, \hat{pos}_t)\cdot \text{transferDistCost}
+\mathrm{value}(\hat{s}, \hat{pos}_w, \hat{r}, \hat{p}, \hat{pos}_t) = &\ & \mathrm{importance}(\hat{s}) \\
+- &\sum_{rl \in \mathrm{Rl}^{\hat{s}}} &\mathrm{allocationCost}(\hat{r}(rl)) \\
+- &\sum_{r \in \mathrm{R}} &\mathrm{moved}(r, \hat{pos}_t)\cdot \mathrm{moveCost}(r) \\
+- &\sum_{r \in \mathrm{R}} &d^{\mu(r)}(pos_0(r), \hat{pos}_t(r))\cdot \mathrm{moveDistCost}(r) \\
+- &\sum_{req \in \mathrm{Req}^{\hat{s}}} &\mathrm{transferred}(req, \hat{r}, \hat{p})\cdot \mathrm{transferCost} \\
+- &\sum_{req \in \mathrm{Req}^{\hat{s}}} &\mathrm{transferDist}(req, \hat{r}, \hat{p}, \hat{pos}_t)\cdot \mathrm{transferDistCost}
 \end{array}
 $$
+
 
 with auxiliary definitions:
 
 $$
-\text{moved}(r, \hat{pos}_t) =
+\mathrm{moved}(r, \hat{pos}_t) =
 \begin{cases}
-1 & \text{if } \hat{pos}_t(r) \neq pos_0(r) \\
-0 & \text{otherwise}
+1 & \mathrm{if } \hat{pos}_t(r) \neq pos_0(r) \\
+0 & \mathrm{otherwise}
 \end{cases}
 $$
 
 $$
-\text{transferred}(req, \hat{r}, \hat{p}) =
+\mathrm{transferred}(req, \hat{r}, \hat{p}) =
 \begin{cases}
-1 & \text{if } h_0(\hat{p}(req)) \neq \hat{r}(\text{targetRole}(req)) \\
-0 & \text{otherwise}
+1 & \mathrm{if } h_0(\hat{p}(req)) \neq \hat{r}(\mathrm{targetRole}(req)) \\
+0 & \mathrm{otherwise}
 \end{cases}
 $$
 
 $$
-\text{transferDist}(req, \hat{r}, \hat{p}, \hat{pos}_t) =
+\mathrm{transferDist}(req, \hat{r}, \hat{p}, \hat{pos}_t) =
 \begin{cases}
-d_{\text{trans}}(pos_0(h_0(\hat{p}(req))), \hat{pos}_t(\hat{r}(\text{targetRole}(req)))) & \text{if } transferred(req, \hat{r}, \hat{p}) \\
-0 & \text{otherwise}
+d_{\mathrm{trans}}(pos_0(h_0(\hat{p}(req))), \hat{pos}_t(\hat{r}(\mathrm{targetRole}(req)))) & \mathrm{if } transferred(req, \hat{r}, \hat{p}) \\
+0 & \mathrm{otherwise}
 \end{cases}
 $$
 
