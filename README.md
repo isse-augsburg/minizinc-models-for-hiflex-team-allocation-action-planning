@@ -192,79 +192,40 @@ Additionally, heuristic target positions:
 
 1. **No robot or part is chosen twice**
 
-$
-\forall rl_1 \neq rl_2 \in \mathrm{Rl}^{\hat{s}}:
-\hat{r}(rl_1) \neq \hat{r}(rl_2)
-$
+$\forall rl_1 \neq rl_2 \in \mathrm{Rl}^{\hat{s}}:\hat{r}(rl_1) \neq \hat{r}(rl_2)$
 
-$
-\forall req_1 \neq req_2 \in \mathrm{Req}^{\hat{s}}:
-\hat{p}(req_1) \neq \hat{p}(req_2)
-$
+$\forall req_1 \neq req_2 \in \mathrm{Req}^{\hat{s}}:\hat{p}(req_1) \neq \hat{p}(req_2)$
 
 2. **Chosen robots can fulfill the roles**
 
-$
-\forall rl \in \mathrm{Rl}^{\hat{s}} \;
-\exists sk \in \text{possibleSkills}(rl):
-sk \in \text{skills}(\hat{r}(rl))
-$
+$\forall rl \in \mathrm{Rl}^{\hat{s}} \exists sk \in \text{possibleSkills}(rl): sk \in \text{skills}(\hat{r}(rl))$
 
 3. **Chosen parts fulfill the requirements**
 
-$
-\forall req \in \mathrm{Req}^{\hat{s}}:
-\hat{p}(req) \in \text{possibleParts}(req)
-$
+$\forall req \in \mathrm{Req}^{\hat{s}}:\hat{p}(req) \in \text{possibleParts}(req)$
 
 4. **Only available robots and parts held by available robots**
 
-$
-\forall rl \in \mathrm{Rl}^{\hat{s}}:
-\text{avail}(\hat{r}(rl))
-$
+$\forall rl \in \mathrm{Rl}^{\hat{s}}:\text{avail}(\hat{r}(rl))$
 
-$
-\forall req \in \mathrm{Req}^{\hat{s}}:
-\text{avail}(h_0(\hat{p}(req)))
-$
+$\forall req \in \mathrm{Req}^{\hat{s}}:\text{avail}(h_0(\hat{p}(req)))$
 
 5. **Team members can reach the working position**
 
-$
-\forall rl \in \mathrm{Rl}^{\hat{s}}:
-r_{\min}(\hat{r}(rl)) \le
-d_w(\hat{pos}_t(\hat{r}(rl)), \hat{pos}_w)
-\le r_{\max}(\hat{r}(rl))
-$
+$\forall rl \in \mathrm{Rl}^{\hat{s}}:r_{\min}(\hat{r}(rl)) \le d_w(\hat{pos}_t(\hat{r}(rl)), \hat{pos}_w)
+\le r_{\max}(\hat{r}(rl))$
 
 6. **Robots can reach their target position**
 
-$
-\forall r \in \mathrm{R}:
-\hat{pos}_t(r) \neq pos_0(r)
-\Rightarrow
-\hat{pos}_t(r) \in
-(\mathrm{Pos}^{\mu(r)} \setminus \mathrm{Pos}_{\text{blocked}})
-\land \text{avail}(r)
-$
+$\forall r \in \mathrm{R}:\hat{pos}_t(r) \neq pos_0(r) \Rightarrow \hat{pos}_t(r) \in (\mathrm{Pos}^{\mu(r)} \setminus \mathrm{Pos}_{\text{blocked}}) \land \text{avail}(r)$
 
 7. **Robots cannot share positions**
 
-$
-\forall r_1 \neq r_2 \in \mathrm{R}:
-\hat{pos}_t(r_1) \neq \hat{pos}_t(r_2)
-$
+$\forall r_1 \neq r_2 \in \mathrm{R}: \hat{pos}_t(r_1) \neq \hat{pos}_t(r_2)$
 
 8. **Linear ordering and offsets on linear axes**
 
-$
-\forall l \in \mathrm{L}, r_1 \neq r_2 \in \mathrm{R}^l:
-o^l(pos_0(r_1)) > o^l(pos_0(r_2))
-\Rightarrow
-o^l(\hat{pos}_t(r_1)) >
-o^l(\hat{pos}_t(r_2)) + \Delta^l
-$
+$\forall l \in \mathrm{L}, r_1 \neq r_2 \in \mathrm{R}^l: o^l(pos_0(r_1)) > o^l(pos_0(r_2)) \Rightarrow o^l(\hat{pos}_t(r_1)) > o^l(\hat{pos}_t(r_2)) + \Delta^l$
 
 #### Optimization Criteria
 
@@ -277,11 +238,11 @@ The reward for the model is given by a simple assignment of an importance value 
 
 
 The following costs are considered to penalize certain allocations:
-- $ \text{allocationCost}: \mathrm{R} \to \mathbb{N} $: The cost of assigning a robot to a team. If certain robots are considered more valuable than others, this can be differentiated here.
-- $ \text{moveCost}: \mathrm{R} \to \mathbb{N} $: The cost of moving a robot, no matter the distance. This is done for representing the difficulties it can cause to precisely measure the new position of a moved robot. In our system, this is trivial for the robots on linear axes but very challenging for the carts, as their internal positioning system is not sufficient for high-precision production processes and thus requires additional camera-based localization. Therefore, this cost is quite high for the carts, while it is negligible for the robots on linear axes.
-- $ \text{moveDistCost}: \mathrm{R} \to \mathbb{N} $: The cost of moving a robot per distance unit, which is used to represent the time it takes to move the robot.
-- $ \text{transferCost}: \mathbb{N} $: The constant cost if a part has to be transferred to another robot.
-- $ \text{transferDistCost}: \mathbb{N} $: The approximated cost of transferring a part over a distance, as given by \( d_{\text{trans}} \).
+- $\text{allocationCost}: \mathrm{R} \to \mathbb{N}$: The cost of assigning a robot to a team. If certain robots are considered more valuable than others, this can be differentiated here.
+- $\text{moveCost}: \mathrm{R} \to \mathbb{N}$: The cost of moving a robot, no matter the distance. This is done for representing the difficulties it can cause to precisely measure the new position of a moved robot. In our system, this is trivial for the robots on linear axes but very challenging for the carts, as their internal positioning system is not sufficient for high-precision production processes and thus requires additional camera-based localization. Therefore, this cost is quite high for the carts, while it is negligible for the robots on linear axes.
+- $\text{moveDistCost}: \mathrm{R} \to \mathbb{N}$: The cost of moving a robot per distance unit, which is used to represent the time it takes to move the robot.
+- $\text{transferCost}: \mathbb{N}$: The constant cost if a part has to be transferred to another robot.
+- $\text{transferDistCost}: \mathbb{N}$: The approximated cost of transferring a part over a distance, as given by $d_{\text{trans}}$.
 
 The solver maximizes the following value (with all inputs being treated as constants):
 
