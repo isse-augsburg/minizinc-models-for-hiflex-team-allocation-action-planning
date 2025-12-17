@@ -159,11 +159,8 @@ There are multiple different distances measured between positions $d(pos_1, pos_
 
 - $\mathrm{P}$ is the set of all available parts.
 - $h_0 : \mathrm{P} \rightarrow \mathrm{R}$ is the robot that currently holds the part.
-- $\mathrm{R}_\mathrm{hold}, \mathrm{R}_\mathrm{handle} : \mathrm{P} \rightarrow \mathbb{P}(\mathrm{R})$ are robots that can hold or handle a part.
-
-Holding a part means that the robot can store or keep it in place.
-Handling a part means that the robot can actively take it or hand it to another holder.
-All handlers can also hold the part, but not all holders can handle it.
+- $\mathrm{R}_\mathrm{hold} : \mathrm{P} \rightarrow \mathbb{P}(\mathrm{R})$ are robots that store or keep the part in place.
+- $\mathrm{R}_\mathrm{handle} : \mathrm{P} \rightarrow \mathbb{P}(\mathrm{R})$ are robots that can also actively take the part or hand it to another holder.
 
 ##### Assignable Assembly Steps
 
@@ -268,13 +265,13 @@ The following costs are considered to penalize certain allocations:
 The solver maximizes the following value (with all inputs being treated as constants):
 
 $$
-\begin{array}{rll}
-\mathrm{value}(\hat{s}, \hat{pos}_w, \hat{r}, \hat{p}, \hat{pos}_t) = &\ & \mathrm{importance}(\hat{s}) \\
-- &\sum_{rl \in \mathrm{Rl}^{\hat{s}}} &\mathrm{allocationCost}(\hat{r}(rl)) \\
-- &\sum_{r \in \mathrm{R}} &\mathrm{moved}(r, \hat{pos}_t)\cdot \mathrm{moveCost}(r) \\
-- &\sum_{r \in \mathrm{R}} &d^{\mu(r)}(pos_0(r), \hat{pos}_t(r))\cdot \mathrm{moveDistCost}(r) \\
-- &\sum_{req \in \mathrm{Req}^{\hat{s}}} &\mathrm{transferred}(req, \hat{r}, \hat{p})\cdot \mathrm{transferCost} \\
-- &\sum_{req \in \mathrm{Req}^{\hat{s}}} &\mathrm{transferDist}(req, \hat{r}, \hat{p}, \hat{pos}_t)\cdot \mathrm{transferDistCost}
+\begin{array}{rl}
+\mathrm{value}(\hat{s}, \hat{pos}_w, \hat{r}, \hat{p}, \hat{pos}_t) = & \mathrm{importance}(\hat{s}) \\
+&- \sum_{rl \in \mathrm{Rl}^{\hat{s}}} \mathrm{allocationCost}(\hat{r}(rl)) \\
+&- \sum_{r \in \mathrm{R}} \mathrm{moved}(r, \hat{pos}_t)\cdot \mathrm{moveCost}(r) \\
+&- \sum_{r \in \mathrm{R}} d^{\mu(r)}(pos_0(r), \hat{pos}_t(r))\cdot \mathrm{moveDistCost}(r) \\
+&- \sum_{req \in \mathrm{Req}^{\hat{s}}} \mathrm{transferred}(req, \hat{r}, \hat{p})\cdot \mathrm{transferCost} \\
+&- \sum_{req \in \mathrm{Req}^{\hat{s}}} \mathrm{transferDist}(req, \hat{r}, \hat{p}, \hat{pos}_t)\cdot \mathrm{transferDistCost}
 \end{array}
 $$
 
