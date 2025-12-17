@@ -2,10 +2,10 @@
 % Action Planning CSOP
 % ---------------------------------------------------------
 % This is a the actual model used for the action planning in our system.
-% For some general comments about comparison between the mathematical model presented in the paper and the MiniZinc model used in practice, please refer to the comments in the team allocation MiniZinc model.
+% For some general comments about comparison between the mathematical model and the MiniZinc model used in practice, please refer to the comments in the team allocation MiniZinc model.
 %
 % NOTE: This action planning model is included for transparency.
-% It was not described in detail in the paper and is less polished than the team allocation model.
+% It was not described in detail in the mathematical model and is less polished than the team allocation model.
 % It nevertheless corresponds to the approach outlined in the paper and is used in our system.
 %
 % It uses the same input as the team allocation model + the result of the team allocation as additional input.
@@ -62,17 +62,17 @@ array[ROBOT] of MC: mobilityClass;                  % mobility class of each rob
 array[MC] of set of ROBOT: robotsByMobilityClass =  [{rob | rob in ROBOT where mobilityClass[rob]=mc}|mc in MC]; % robots of each mobility class [R^m]
 array[ROBOT] of POS: currentPos;                    % position of each robot before the allocation [pos_0] 
 % [EXT, avail] availability of a robot; here differentiated by availability for active skill execution (robot has to move), passive skill execution (robot is used, e.g. for storing parts), or moving the robot to another position
-% In the paper simplified to a simple available/unavailable distinction for each robot
+% In the mathematical model simplified to a simple available/unavailable distinction for each robot
 array[ROBOT] of bool: robotAvailableActive;
 array[ROBOT] of bool: robotAvailablePassive;
 array[ROBOT] of bool: robotAvailableMoving;
 
-% [EXT] The skill concept is more complex than presented in the paper. The main differences are:
+% [EXT] The skill concept is more complex than presented in the mathematical model. The main differences are:
 % - Every instance of a skill by a robot is represented as a separate skill in the model with its own properties/costs etc., so if two robots can screw there are two screwing skills in the model, one for each robot.
-%   - This means, that unlike in the paper, it is easier to map skills to robots (as every skill has exactly one robot) instead of the other way around, which we chose for the paper for easier readability.
-%   - It also means getting the available skills for a role is a bit more complex and requires some preprocessing, as skills are not just strings with no properties as could be assumed from the paper.
-% - Skills have some additional properties left out in the paper for simplicity (active/passive, transfer skill or not, internal successor skills)
-% - minReach/maxReach can be set for every skill of a robot, allowing different reaches for different skills (does not need to be used, but is possible); in the paper this is a property of the robot, as this is more natural without a detailed explanation of the skill concept
+%   - This means, that unlike in the mathematical model, it is easier to map skills to robots (as every skill has exactly one robot) instead of the other way around, which we chose for the mathematical model for easier readability.
+%   - It also means getting the available skills for a role is a bit more complex and requires some preprocessing, as skills are not just strings with no properties as could be assumed from the mathematical model.
+% - Skills have some additional properties left out in the mathematical model for simplicity (active/passive, transfer skill or not, internal successor skills)
+% - minReach/maxReach can be set for every skill of a robot, allowing different reaches for different skills (does not need to be used, but is possible); in the mathematical model this is a property of the robot, as this is more natural without a detailed explanation of the skill concept
 int: skills;                                        % number of skills
 set of int: SKILL = 1..skills;                      % set of skills [Sk]
 array[SKILL] of bool: currentSkill;                 % [EXT] whether the skill is currently active or only available by a tool change
@@ -96,12 +96,12 @@ array[ROBOT] of set of SKILL: skillsForRobot = [{sk | sk in SKILL where skillToR
 
 % ----------------------------------------
 % Parts
-% [EXT] Every part is controlled using a particular skill of a robot, while in the paper only the robots are specified for simplicity.
+% [EXT] Every part is controlled using a particular skill of a robot, while in the mathematical model only the robots are specified for simplicity.
 % Using the skill concept to represent part holding allows some flexibility by allowing a robot that can hold different parts in different ways, potentially witch different capacity (e.g., an industrial robot can grip a part with its end-effector or store it on a tray that moves with it).
 % It also makes the model more complex and might be an unintuitive extension of the skill concept
 % It as so far proven to be useful in our implementation, but is still open for discussion, weighing pros and cons.
-% For the paper, we decided to keep the simpler representation using only robots.
-% The model here can be easily adapted to the simpler representation, which has also been done in some tests, therefore, we believe it is not dishonest to present the model used in the paper as quasi-equivalent to the one we actually use right now (seen here).
+% For the mathematical model, we decided to keep the simpler representation using only robots.
+% The model here can be easily adapted to the simpler representation, which has also been done in some tests, therefore, we believe it is not dishonest to present the model used in the mathematical model as quasi-equivalent to the one we actually use right now (seen here).
 % ----------------------------------------
 
 int: partsInCell;                                   % number of parts in the cell (counting only those relevant for the team allocation problem)
@@ -194,7 +194,7 @@ set of int: STATEx = 0..finalState;                 % set of states including th
 % The value should therefore be chosen carefully, depending on the complexity of the scenario.
 % This issue shows the problems of losing a solver meant for traditional CS(O)P problems for such temporal planning problems.
 % We did this anyways to create a more uniform model together with the team, allocation, possibly even alloing both to be solved together (which quickly proved too inefficient even for small problems).
-% As we mentioned in the paper, we now believe that while this is a good benchmark solution for us, using a more dedicated planner for these types of problems is more sensible.
+% As we briefly mentioned in the paper, we now believe that while this is a good benchmark solution for us, using a more dedicated planner for these types of problems is more sensible.
 % Therefore, we already created on a Planning Domain Definition Language (PDDL) representation of the problem and expect a solution using a PDDL planner to be fully available in the near future.
 % We plan to present this in a follow-up publication.
 
@@ -375,10 +375,10 @@ constraint not allowHandlersToStoreParts -> forall(p in PART where not (p in cho
 % input variables for optimization
 % ----------------------------------------
 
-% [EXT] The optimization is slightly more involved than presented in the paper
+% [EXT] The optimization is slightly more involved than presented in the mathematical model
 % As this is only a heuristic anyways and is part of continuous development, we decided to present our base considerations for an optimization function
-% in the paper and leave out some of the more complex aspects which came into place during development and are not fixed permanently.
-% The idea presented in the paper (punishing aspects which will likely lead to delays or problems during execution) is still fully applicable and many aspects can be mapped despite the
+% in the mathematical model and leave out some of the more complex aspects which came into place during development and are not fixed permanently.
+% The idea presented in the mathematical model (punishing aspects which will likely lead to delays or problems during execution) is still fully applicable and many aspects can be mapped despite the
 % formula not being exactly the same.
 
 array[STEP] of VAL: importance; % importance of steps [importance]
@@ -392,7 +392,7 @@ array[SKILL] of VAL: transferCost;          % [EXT] cost, if a part has to be tr
 array[ROBOT] of VAL: robotMoveCost;         % cost for moving a robot once, regardless of distance [moveCost]
 array[ROBOT] of VAL: robotMoveDistanceCost; % cost per distance unit for moving a robot [moveDistanceCost]
 
-% [EXT] boolean flags to turn on/off certain optimization aspects; by default, all are true; in the paper, we just assume all are true and did not mention them
+% [EXT] boolean flags to turn on/off certain optimization aspects; by default, all are true; in the mathematical model and in the paper, we just assume all are true and did not mention them
 bool: optimizeAssignedSkills;
 bool: optimizeTransfers;
 bool: optimizeMovementNum;

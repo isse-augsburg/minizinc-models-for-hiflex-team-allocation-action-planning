@@ -2,17 +2,17 @@
 % Team Allocation CSOP
 % ---------------------------------------------------------
 % This is a the actual model used for the team allocation in our system.
-% - Variable names are sometimes changed compared to the paper due to the different presentation format (mathematical formulas in two-column format vs. MiniZinc code).
-%   - Where variable names are changed compared to the paper, this is noted at declaration of the variable in [square brackets].
+% - Variable names are sometimes changed compared to the mathematical model we presented due to the different presentation format (mathematical formulas vs. MiniZinc code).
+%   - Where variable names are changed, this is noted at declaration of the variable in [square brackets].
 % - The sets of robots (R), parts (P) etc. are represented as set of int with a certain range. Therefore, every object is simply represented by an integer. Our code maps the actual objects to these integers and vice versa.
 % - Functions A -> B are represented as arrays with index set A and value set B (array[A] of B).
 %   - Similarly, functions A -> P(B) are represented as arrays with index set A and value set P(B) (array[A] of set of B)
 %   and functions A x B -> C are represented as arrays with index set A x B and value set C (array[A,B] of C) etc.
-% - As mentioned in the paper, some aspects explained there were simplified compared to the actual model here.
-%   - Whenever it is possible, to map to sections of the paper, this is done. Extensions compared to the paper model are marked with [EXT] and quickly explained.
+% - In the mathematical model, some aspects explained there were simplified compared to the actual model here.
+%   - Whenever it is possible, to map to sections of the mathematical model, this is done. Extensions compared to the mathematical model are marked with [EXT] and quickly explained.
 % =========================================================
 
-% Paper ↔ Code aliases (quick reference)
+% Math model ↔ Code aliases (quick reference)
 %
 %   inputs
 % ----------------------------------------
@@ -105,17 +105,17 @@ array[ROBOT] of MC: mobilityClass;                  % mobility class of each rob
 array[MC] of set of ROBOT: robotsByMobilityClass =  [{rob | rob in ROBOT where mobilityClass[rob]=mc}|mc in MC]; % robots of each mobility class [R^m]
 array[ROBOT] of POS: currentPos;                    % position of each robot before the allocation [pos_0] 
 % [EXT, avail] availability of a robot; here differentiated by availability for active skill execution (robot has to move), passive skill execution (robot is used, e.g. for storing parts), or moving the robot to another position
-% In the paper simplified to a simple available/unavailable distinction for each robot.
+% In the mathematical model, simplified to a simple available/unavailable distinction for each robot.
 array[ROBOT] of bool: robotAvailableActive;
 array[ROBOT] of bool: robotAvailablePassive;
 array[ROBOT] of bool: robotAvailableMoving;
 
-% [EXT] The skill concept is more complex than presented in the paper. The main differences are:
+% [EXT] The skill concept is more complex than presented in the mathematical model. The main differences are:
 % - Every instance of a skill by a robot is represented as a separate skill in the model with its own properties/costs etc., so if two robots can screw there are two screwing skills in the model, one for each robot.
-%   - This means, that unlike in the paper, it is easier to map skills to robots (as every skill has exactly one robot) instead of the other way around, which we chose for the paper for easier readability.
-%   - It also means getting the available skills for a role is a bit more complex and requires some preprocessing, as skills are not just strings with no properties as could be assumed from the paper.
-% - Skills have some additional properties left out in the paper for simplicity (active/passive, transfer skill or not, internal successor skills)
-% - minReach/maxReach can be set for every skill of a robot, allowing different reaches for different skills (does not need to be used, but is possible); in the paper this is a property of the robot, as this is more natural without a detailed explanation of the skill concept
+%   - This means, that unlike in the mathematical model, it is easier to map skills to robots (as every skill has exactly one robot) instead of the other way around, which we chose for the mathematical model for easier readability.
+%   - It also means getting the available skills for a role is a bit more complex and requires some preprocessing, as skills are not just strings with no properties as could be assumed from the mathematical model.
+% - Skills have some additional properties left out in the mathematical model for simplicity (active/passive, transfer skill or not, internal successor skills)
+% - minReach/maxReach can be set for every skill of a robot, allowing different reaches for different skills (does not need to be used, but is possible); in the mathematical model this is a property of the robot, as this is more natural without a detailed explanation of the skill concept
 int: skills;                                        % number of skills
 set of int: SKILL = 1..skills;                      % set of skills [Sk]
 array[SKILL] of bool: currentSkill;                 % [EXT] whether the skill is currently active or only available by a tool change
@@ -136,17 +136,17 @@ set of SKILL: availableSkills = {sk | sk in SKILL where skillAvailable[sk]};
 
 % ----------------------------------------
 % Parts
-% [EXT] Every part is controlled using a particular skill of a robot, while in the paper only the robots are specified for simplicity.
+% [EXT] Every part is controlled using a particular skill of a robot, while in the mathematical model only the robots are specified for simplicity.
 % Using the skill concept to represent part holding allows some flexibility by allowing a robot that can hold different parts in different ways, potentially witch different capacity (e.g., an industrial robot can grip a part with its end-effector or store it on a tray that moves with it).
 % It also makes the model more complex and might be an unintuitive extension of the skill concept
 % It as so far proven to be useful in our implementation, but is still open for discussion, weighing pros and cons.
-% For the paper, we decided to keep the simpler representation using only robots.
-% The model here can be easily adapted to the simpler representation, which has also been done in some tests, therefore, we believe it is not dishonest to present the model used in the paper as quasi-equivalent to the one we actually use right now (seen here).
+% For the mathematical model, we decided to keep the simpler representation using only robots.
+% The model here can be easily adapted to the simpler representation, which has also been done in some tests, therefore, we believe it is not dishonest to present the model used in the mathematical model as quasi-equivalent to the one we actually use right now (seen here).
 % ----------------------------------------
 
 int: partsInCell;                                   % number of parts in the cell (counting only those relevant for the team allocation problem)
 set of int: PART = 1..partsInCell;                  % set of parts in the cell [P]
-array[PART] of SKILL: initialHolder;                % skill used for holding the part at the robot that currently holds the part [in the paper, only h_0 is specified instead of a particular skill [EXT, h_0]
+array[PART] of SKILL: initialHolder;                % skill used for holding the part at the robot that currently holds the part [in the mathematical model, only h_0 is specified instead of a particular skill [EXT, h_0]
 array[PART] of set of SKILL: potentialHolders;      % skills that can be used for holding the part [EXT, R_hold], not including handlers, which can also be used for holding
 array[PART] of set of SKILL: potentialHandlers;     % skills that can be used for handling the part, i.e., changing its orientation etc. [EXT, R_handle]
 
@@ -197,28 +197,28 @@ array[REQ] of set of PART: possibleParts;           % parts that can be used for
 % ----------------------------------------
 % ----------------------------------------
 % decision variables
-% [EXT] model allows assigning multiple steps at once, if they do not interfere; we used this extension in some tests, but for our current implementation and all experiments mentioned in the paper we presented we only allow one step to be assigned, as presented in the paper
+% [EXT] model allows assigning multiple steps at once, if they do not interfere; we used this extension in some tests, but for our current implementation and all experiments mentioned in the paper we presented we only allow one step to be assigned.
 % In order to allow this restriction to be lifted easily, the data structures used are more generic and an extra constraint is used to restrict to at most one assigned step 
-% Some of the other variable domains also are also more generic then in the paper on first glance, but will be restricted in the following section "data consistency constraints"
+% Some of the other variable domains also are also more generic then in the mathematical model on first glance, but will be restricted in the following section "data consistency constraints"
 % ----------------------------------------
 % ----------------------------------------
 
 array[TASK] of var opt STEP: assignedStepForTask;   % assigned steps; always at most one per task; currently at most one per team allocation (see constraint below) [\hat{s}]
-array[ROLE] of var opt SKILL: executingSkill;       % skill used for executing the role [\hat{r}] [EXT] In the paper, the robot is chosen directly instead of the appropriate skill, that does not really matter in practice
+array[ROLE] of var opt SKILL: executingSkill;       % skill used for executing the role [\hat{r}] [EXT] In the mathematical model, the robot is chosen directly instead of the appropriate skill, that does not really matter in practice
 array[REQ] of var opt PART: chosenPart;             % part used for the required part [\hat{p}]
 array[WORKPOS] of var opt FREEWORKPOS: workPos;     % working position assigned for the step [\hat{pos}_w]
 array[ROBOT] of var POS: targetPos;                 % target position for each robot when the step can start [\hat{pos}_t]
 
 % ----------------------------------------
 % Data-consistency constraints.
-% In the paper, these are implicit via function domains; MiniZinc needs them as explicit constraints.
+% In the mathematical model, these are implicit via function domains; MiniZinc needs them as explicit constraints.
 % ----------------------------------------
 
 % consistency of the "assignedStepForTask" variable and definition of the set of assigned steps
 constraint forall(t in TASK)(assignedStepForTask[t] = <> \/ assignedStepForTask[t] in taskSteps[t]);
 var set of STEP: assignedSteps = {s | s in STEP where s in assignedStepForTask};
 
-% Paper models choosing a single step → enforce at most one assigned step here.
+% Mathematical model choosing a single step → enforce at most one assigned step here.
 constraint card(assignedSteps) <= 1;
 
 % definition of the actual domains for the other decision variables (cannot be directly set as the array index set in MiniZinc, as they are not automatically ranges, i.e., sequences of directly consecutive integers, as is required for index sets; therefore the domain restriction is done by constraints)
@@ -227,7 +227,7 @@ var set of REQ: allocatedReqs = {req| t in assignedSteps, req in stepToReqs[t]};
 var set of WORKPOS: allocatedWorkPos = {wp| t in assignedSteps, wp in stepToWorkPos[t]};    % [EXT] Work positions that need to be assigned for the chosen step (currently always exactly one, see see Pos_w comment)
 
 
-% ensuring that allocations take place for all role, required parts, work positions of the chosen step and not for others; conforming to the domains of decision variables presented in the paper
+% ensuring that allocations take place for all role, required parts, work positions of the chosen step and not for others; conforming to the domains of decision variables presented in the mathematical model.
 constraint forall(rl in ROLE)(rl in allocatedRoles <-> occurs(executingSkill[rl]));
 constraint forall(rl in REQ)(rl in allocatedReqs <-> occurs(chosenPart[rl]));
 constraint forall(wp in WORKPOS)(wp in allocatedWorkPos <-> occurs(workPos[wp]));
@@ -238,7 +238,7 @@ constraint forall(wp in WORKPOS)(wp in allocatedWorkPos <-> occurs(workPos[wp]))
 
 array[REQ] of var opt SKILL: targetSkill = array1d(REQ, [if req in allocatedReqs then executingSkill[targetRole[req]] else <> endif | req in REQ]); % skill that must hold the part at the beginning of the step execution
 
-array[ROLE] of var opt ROBOT: executingRobots = [if occurs(executingSkill[rl]) then skillToRobot[deopt(executingSkill[rl])] else <> endif| rl in ROLE]; % exactly [\hat{r}] in the paper
+array[ROLE] of var opt ROBOT: executingRobots = [if occurs(executingSkill[rl]) then skillToRobot[deopt(executingSkill[rl])] else <> endif| rl in ROLE]; % exactly [\hat{r}] in the mathematical model
 array[STEP] of var set of ROBOT: teamForStep = [if s in assignedSteps then {deopt(executingRobots[rl]) | rl in stepToRoles[s]} else {} endif  | s in STEP];
 array[ROBOT] of var bool: movedRobot = [targetPos[rob] != currentPos[rob]| rob in ROBOT];  % [moved]
 array[ROLE] of var opt POS: roleRobotPos = [if rl in allocatedRoles then targetPos[executingRobots[rl]] else <> endif| rl in ROLE]; % target position of the robot that executes the role
@@ -290,7 +290,7 @@ constraint all_different(targetPos);
 constraint forall(lmc in LMC, rob1 in robotsByMobilityClass[lmc], rob2 in robotsByMobilityClass[lmc])(mcLinearOrder[lmc, currentPos[rob1]] > mcLinearOrder[lmc, currentPos[rob2]] -> mcLinearOrder[lmc, targetPos[rob1]] > mcLinearOrder[lmc, targetPos[rob2]] + requiredOffset[lmc]);
 
 % [EXT] work position cannot be set at position of robot not participating at the work there, as it could block the execution of the step
-% This was simply left out of the paper for brevity, as it is usually fulfilled anyways if there needs to be a cart exactly at the work position (because of constraint 7.), which is the case in all examples we presented in the paper
+% This was simply left out of the paper and themathematical model for brevity, as it is usually fulfilled anyways if there needs to be a cart exactly at the work position (because of constraint 7.), which is the case in all examples we presented in the paper
 % As this is not a permanent and fixed constraint for our system, we still need the constraint for the MiniZinc model to work in all possible cases
 constraint forall(s in STEP, wp in stepToWorkPos[s], rob in ROBOT)(targetPos[rob]=workPos[wp] -> rob in teamForStep[s]);
 
@@ -311,10 +311,10 @@ constraint forall(sk in targetSkill)(freeCapacity[sk] = 0 -> exists(p in PART wh
 % input variables for optimization
 % ----------------------------------------
 
-% [EXT] The optimization is slightly more involved than presented in the paper
+% [EXT] The optimization is slightly more involved than presented in the mathematical model
 % As this is only a heuristic anyways and is part of continuous development, we decided to present our base considerations for an optimization function
-% in the paper and leave out some of the more complex aspects which came into place during development and are not fixed permanently.
-% The idea presented in the paper (punishing aspects which will likely lead to delays or problems during execution) is still fully applicable and many aspects can be mapped despite the
+% in the mathematical model and leave out some of the more complex aspects which came into place during development and are not fixed permanently.
+% The idea presented in the mathematical model (punishing aspects which will likely lead to delays or problems during execution) is still fully applicable and many aspects can be mapped despite the
 % formula not being exactly the same.
 
 array[STEP] of VAL: importance; % importance of steps [importance]
@@ -332,7 +332,7 @@ int: adjustmentPenalty;                     % [EXT] additional cost if the part 
 int: transferPenalty;                       % Additional cost if a part has to be transferred to another robot before the step execution can start [transferCost]
 int: transferDistPenalty;                   % Additional cost per approximated distance unit if a part has to be transferred to another robot before the step execution can start [transferDistCost]
 
-% [EXT] boolean flags to turn on/off certain optimization aspects; by default, all are true; in the paper, we just assume all are true and did not mention them
+% [EXT] boolean flags to turn on/off certain optimization aspects; by default, all are true; in the mathematical model and in the paper, we just assume all are true and did not mention them
 bool: optimizeAssignedSkills;
 bool: optimizeTransfers;
 bool: optimizeMovementNum;
@@ -341,7 +341,7 @@ bool: applyUnknownTransferPenalties;
 
 % ----------------------------------------
 % Calculation of the value of a team allocation result
-% - This was somewhat simplified for the presentation in the paper. Approximate mapping:
+% - This was somewhat simplified for the presentation in the mathematical model. Approximate mapping:
 %   + importanceSum                                 ≙ importance(ŝ)
 %   - sum(assignmentCostArray)                      ≙ Σ allocationCost(r̂(rl)) and skill-level extension [EXT]
 %   - sum(robotMoveCostArray)                       ≙ Σ moved(r) * moveCost(r)
