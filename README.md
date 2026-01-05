@@ -44,7 +44,7 @@ For more details, more customized execution instructions, and further explanatio
 This repository contains MiniZinc models and example data files for solving the **team allocation** and **action planning** problems in a flexible assembly cell with multiple robots.
 
 They are used in the **HiFlex** system and published as supplementary material for the paper: 
-*Online Team Formation in a Flexible Multi-Robot Production Cell*.
+*Online Team Formation in a Highly Flexible Multi-Robot Production Cell*.
 This repository is intended to enable detailed inspection and reproduction of the model which was explained in more general terms in the paper.
 
 For this publication, the models have been restructured and commented to facilitate understanding as supplementary material.
