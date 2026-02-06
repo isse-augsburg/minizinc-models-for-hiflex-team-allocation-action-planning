@@ -1,7 +1,7 @@
 # MiniZinc Models for Team Allocation and Action Planning with Example Data Files
 
 - For the mathematical formulation of the team allocation problem CSOP, please see the [Mathematical Description of the CSOP for Team Allocation](#mathematical-description-of-the-csop-for-team-allocation) section.
-- If you want to quickly execute the models with the provided example data, please check the [Requirements] and then past ethe instructions for [Execution Using the Command Line](#execution-using-the-command-line). You can check your results against the ones we expect using the [Expected Behavior and Output](#expected-behavior-and-output) section.
+- If you want to quickly execute the models with the provided example data, please check the [Requirements] and then paste the instructions for [Execution Using the Command Line](#execution-using-the-command-line). You can check your results against the ones we expect using the [Expected Behavior and Output](#expected-behavior-and-output) section.
 - If you want an overview of the files in this repository, please see the [Contents](#contents) section.
 
 For more details, more customized execution instructions, and further explanations, please read the full README below.
@@ -108,6 +108,7 @@ For the team allocation model, we have added the numbering of the constraints fr
 #### General Notes
 
 In order to make the models easier to understand, we have included a mathematical description of the CSOP.
+Most of this is already contained in the paper itself, however a few extensions were not included to save space, e.g. regarding optimization.
 This description is simplified compared to the MiniZinc models in order to focus on the core aspects of the problem.
 Still, we have taken various measures in order to simplify understanding the team allocation model and its relation to the mathematical formulation of the CSOP:
 - [Structure](#structure) and order of the various input and decision variables and constraints is similar in the MiniZinc model and the mathematical formulation.
